@@ -9,6 +9,10 @@ game.state.add('play', {
 
         this.game.load.image('bart', 'assets/allacrost_enemy_sprites/bart.png');
         this.game.load.image('homer', 'assets/allacrost_enemy_sprites/homer.png');
+        this.game.load.image('lisa', 'assets/allacrost_enemy_sprites/lisa.png');
+        this.game.load.image('marge', 'assets/allacrost_enemy_sprites/marge.png');
+        this.game.load.image('maggie', 'assets/allacrost_enemy_sprites/maggie.jpg');
+
         this.game.load.image('aurum-drakueli', 'assets/allacrost_enemy_sprites/aurum-drakueli.png');
         this.game.load.image('bat', 'assets/allacrost_enemy_sprites/bat.png');
         this.game.load.image('daemarbora', 'assets/allacrost_enemy_sprites/daemarbora.png');
@@ -103,7 +107,11 @@ game.state.add('play', {
         });
 
         var monsterData = [
+            {name: 'Bart',        image: 'bart',        maxHealth: 60},
             {name: 'Homer',        image: 'homer',        maxHealth: 100},
+            {name: 'Lisa',        image: 'lisa',        maxHealth: 30},
+            {name: 'Marge',        image: 'marge',        maxHealth: 70},
+            {name: 'Maggie',        image: 'maggie',        maxHealth: 10},
           
         ];
         this.monsters = this.game.add.group();
