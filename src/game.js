@@ -2,13 +2,17 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '');
 
 game.state.add('play', {
     preload: function() {
-        this.game.load.image('forest-back', 'assets/parallax_forest_pack/layers/parallax-forest-back-trees.png');
-        this.game.load.image('forest-lights', 'assets/parallax_forest_pack/layers/parallax-forest-lights.png');
+        this.game.load.image('background1', 'assets/parallax_forest_pack/layers/background.png');
+        this.game.load.image('background2', 'assets/parallax_forest_pack/layers/background2.png');
         this.game.load.image('forest-middle', 'assets/parallax_forest_pack/layers/parallax-forest-middle-trees.png');
         this.game.load.image('forest-front', 'assets/parallax_forest_pack/layers/parallax-forest-front-trees.png');
 
-        this.game.load.image('aerocephal', 'assets/allacrost_enemy_sprites/aerocephal.png');
-        this.game.load.image('arcana_drake', 'assets/allacrost_enemy_sprites/arcana_drake.png');
+        this.game.load.image('bart', 'assets/allacrost_enemy_sprites/bart.png');
+        this.game.load.image('homer', 'assets/allacrost_enemy_sprites/homer.png');
+        this.game.load.image('lisa', 'assets/allacrost_enemy_sprites/lisa.png');
+        this.game.load.image('marge', 'assets/allacrost_enemy_sprites/marge.png');
+        this.game.load.image('maggie', 'assets/allacrost_enemy_sprites/maggie.jpg');
+
         this.game.load.image('aurum-drakueli', 'assets/allacrost_enemy_sprites/aurum-drakueli.png');
         this.game.load.image('bat', 'assets/allacrost_enemy_sprites/bat.png');
         this.game.load.image('daemarbora', 'assets/allacrost_enemy_sprites/daemarbora.png');
@@ -24,13 +28,14 @@ game.state.add('play', {
         this.game.load.image('spider', 'assets/allacrost_enemy_sprites/spider.png');
         this.game.load.image('stygian_lizard', 'assets/allacrost_enemy_sprites/stygian_lizard.png');
 
-        this.game.load.image('gold_coin', 'assets/496_RPG_icons/I_GoldCoin.png');
+        this.game.load.image('donut_pink', 'assets/496_RPG_icons/donut_pink.png');
 
-        this.game.load.image('dagger', 'assets/496_RPG_icons/W_Dagger002.png');
-        this.game.load.image('swordIcon1', 'assets/496_RPG_icons/S_Sword15.png');
+        this.game.load.image('fist', 'assets/496_RPG_icons/fist.png');
+        this.game.load.image('nest', 'assets/496_RPG_icons/nest.png');
+        this.game.load.image('firePunch', 'assets/496_RPG_icons/firepunch_alpha.gif');
 
         // build panel for upgrades
-        var bmd = this.game.add.bitmapData(250, 500);
+        var bmd = this.game.add.bitmapData(450, 500);
         bmd.ctx.fillStyle = '#9a783d';
         bmd.ctx.strokeStyle = '#35371c';
         bmd.ctx.lineWidth = 12;
@@ -48,8 +53,8 @@ game.state.add('play', {
 
         // the main player
         this.player = {
-            clickDmg: 1,
-            gold: 50,
+            clickDmg: 2,
+            gold: 500,
             dps: 0
         };
 
@@ -65,23 +70,27 @@ game.state.add('play', {
 
         this.background = this.game.add.group();
         // setup each of our background layers to take the full screen
-        ['forest-back', 'forest-lights', 'forest-middle', 'forest-front']
+        ['background1','background2']
             .forEach(function(image) {
                 var bg = state.game.add.tileSprite(0, 0, state.game.world.width,
                     state.game.world.height, image, '', state.background);
                 bg.tileScale.setTo(4,4);
             });
 
+            
         this.upgradePanel = this.game.add.image(10, 70, this.game.cache.getBitmapData('upgradePanel'));
         var upgradeButtons = this.upgradePanel.addChild(this.game.add.group());
         upgradeButtons.position.setTo(8, 8);
 
         var upgradeButtonsData = [
-            {icon: 'dagger', name: 'Attack', level: 0, cost: 5, purchaseHandler: function(button, player) {
+            {icon: 'fist', name: 'Punch', level: 0, cost: 5, purchaseHandler: function(button, player) {
                 player.clickDmg += 1;
             }},
-            {icon: 'swordIcon1', name: 'Auto-Attack', level: 0, cost: 25, purchaseHandler: function(button, player) {
+            {icon: 'firePunch', name: 'Multi-Punch', level: 0, cost: 15, purchaseHandler: function(button, player) {
                 player.dps += 5;
+            }},
+            {icon: 'nest', name: 'Nest', level: 0, cost: 35, purchaseHandler: function(button, player) {
+                player.dps += 15;
             }}
         ];
 
@@ -98,22 +107,12 @@ game.state.add('play', {
         });
 
         var monsterData = [
-            {name: 'Aerocephal',        image: 'aerocephal',        maxHealth: 10},
-            {name: 'Arcana Drake',      image: 'arcana_drake',      maxHealth: 20},
-            {name: 'Aurum Drakueli',    image: 'aurum-drakueli',    maxHealth: 30},
-            {name: 'Bat',               image: 'bat',               maxHealth: 5},
-            {name: 'Daemarbora',        image: 'daemarbora',        maxHealth: 10},
-            {name: 'Deceleon',          image: 'deceleon',          maxHealth: 10},
-            {name: 'Demonic Essence',   image: 'demonic_essence',   maxHealth: 15},
-            {name: 'Dune Crawler',      image: 'dune_crawler',      maxHealth: 8},
-            {name: 'Green Slime',       image: 'green_slime',       maxHealth: 3},
-            {name: 'Nagaruda',          image: 'nagaruda',          maxHealth: 13},
-            {name: 'Rat',               image: 'rat',               maxHealth: 2},
-            {name: 'Scorpion',          image: 'scorpion',          maxHealth: 2},
-            {name: 'Skeleton',          image: 'skeleton',          maxHealth: 6},
-            {name: 'Snake',             image: 'snake',             maxHealth: 4},
-            {name: 'Spider',            image: 'spider',            maxHealth: 4},
-            {name: 'Stygian Lizard',    image: 'stygian_lizard',    maxHealth: 20}
+            {name: 'Bart',        image: 'bart',        maxHealth: 60},
+            {name: 'Homer',        image: 'homer',        maxHealth: 100},
+            {name: 'Lisa',        image: 'lisa',        maxHealth: 30},
+            {name: 'Marge',        image: 'marge',        maxHealth: 70},
+            {name: 'Maggie',        image: 'maggie',        maxHealth: 10},
+          
         ];
         this.monsters = this.game.add.group();
 
@@ -179,12 +178,12 @@ game.state.add('play', {
 
         // create a pool of gold coins
         this.coins = this.add.group();
-        this.coins.createMultiple(50, 'gold_coin', '', false);
+        this.coins.createMultiple(50, 'donut_pink', '', false);
         this.coins.setAll('inputEnabled', true);
         this.coins.setAll('goldValue', 1);
         this.coins.callAll('events.onInputDown.add', 'events.onInputDown', this.onClickCoin, this);
 
-        this.playerGoldText = this.add.text(30, 30, 'Gold: ' + this.player.gold, {
+        this.playerGoldText = this.add.text(30, 30, 'Donuts: ' + this.player.gold, {
             font: '24px Arial Black',
             fill: '#fff',
             strokeThickness: 4
@@ -225,7 +224,7 @@ game.state.add('play', {
 
         if (this.player.gold - getAdjustedCost() >= 0) {
             this.player.gold -= getAdjustedCost();
-            this.playerGoldText.text = 'Gold: ' + this.player.gold;
+            this.playerGoldText.text = 'Donuts: ' + this.player.gold;
             button.details.level++;
             button.text.text = button.details.name + ': ' + button.details.level;
             button.costText.text = 'Cost: ' + getAdjustedCost();
@@ -239,7 +238,7 @@ game.state.add('play', {
         // give the player gold
         this.player.gold += coin.goldValue;
         // update UI
-        this.playerGoldText.text = 'Gold: ' + this.player.gold;
+        this.playerGoldText.text = 'Donuts: ' + this.player.gold;
         // remove the coin
         coin.kill();
     },
@@ -251,7 +250,7 @@ game.state.add('play', {
         // spawn a coin on the ground
         coin = this.coins.getFirstExists(false);
         coin.reset(this.game.world.centerX + this.game.rnd.integerInRange(-100, 100), this.game.world.centerY);
-        coin.goldValue = Math.round(this.level * 1.33);
+        coin.goldValue = Math.round(this.level * 1.13);
         this.game.time.events.add(Phaser.Timer.SECOND * 3, this.onClickCoin, this, coin);
 
         this.levelKills++;
