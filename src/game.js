@@ -34,6 +34,9 @@ game.state.add('play', {
         this.game.load.image('nest', 'assets/496_RPG_icons/nest.png');
         this.game.load.image('firePunch', 'assets/496_RPG_icons/firepunch_alpha.gif');
 
+        this.load.audio('theme','assets/audio/theme.mp3');
+
+
         // build panel for upgrades
         var bmd = this.game.add.bitmapData(450, 500);
         bmd.ctx.fillStyle = '#9a783d';
@@ -68,6 +71,8 @@ game.state.add('play', {
     create: function() {
         var state = this;
 
+        
+
         this.background = this.game.add.group();
         // setup each of our background layers to take the full screen
         ['background1','background2']
@@ -93,6 +98,8 @@ game.state.add('play', {
                 player.dps += 15;
             }}
         ];
+
+        
 
         var button;
         upgradeButtonsData.forEach(function(buttonData, index) {
@@ -205,6 +212,13 @@ game.state.add('play', {
             fill: '#fff',
             strokeThickness: 4
         }));
+
+         //Som de fundo
+         this.game = this.sound.add("theme");
+         this.game.play();
+         //Permitir que a música de jogo nunca pare
+         this.game.setLoop(true);
+         
     },
     onDPS: function() {
         if (this.player.dps > 0) {
