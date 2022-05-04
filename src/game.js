@@ -34,7 +34,13 @@ game.state.add('play', {
         this.game.load.image('nest', 'assets/496_RPG_icons/nest.png');
         this.game.load.image('firePunch', 'assets/496_RPG_icons/firepunch_alpha.gif');
 
-        this.load.audio('theme','assets/audio/theme.mp3');
+        this.game.load.audio('theme','assets/audio/theme.mp3');
+        this.game.load.audio('canon','assets/audio/canon.mp3');
+        this.game.load.audio('hurt','assets/audio/hurt.wav');
+        this.game.load.audio('point','assets/audio/points.mp3');
+        this.game.load.audio('spawn','assets/audio/bossspawn.mp3');
+
+
 
 
         // build panel for upgrades
@@ -71,8 +77,6 @@ game.state.add('play', {
     create: function() {
         var state = this;
 
-        
-
         this.background = this.game.add.group();
         // setup each of our background layers to take the full screen
         ['background1','background2']
@@ -95,11 +99,9 @@ game.state.add('play', {
                 player.dps += 5;
             }},
             {icon: 'nest', name: 'Nest', level: 0, cost: 35, purchaseHandler: function(button, player) {
-                player.dps += 15;
+                player.clickDmg += 15;
             }}
         ];
-
-        
 
         var button;
         upgradeButtonsData.forEach(function(buttonData, index) {
@@ -196,8 +198,8 @@ game.state.add('play', {
             strokeThickness: 4
         });
 
-        // 100ms 10x a second
-        this.dpsTimer = this.game.time.events.loop(100, this.onDPS, this);
+        // 1000ms 1x a second
+        this.dpsTimer = this.game.time.events.loop(500, this.onDPS, this);
 
         // setup the world progression display
         this.levelUI = this.game.add.group();
@@ -212,17 +214,16 @@ game.state.add('play', {
             fill: '#fff',
             strokeThickness: 4
         }));
+        this.theme = this.sound.add("theme");
+        this.theme.play();
+        this.theme.setLoop(true);
 
-         //Som de fundo
-         this.game = this.sound.add("theme");
-         this.game.play();
-         //Permitir que a música de jogo nunca pare
-         this.game.setLoop(true);
-         
     },
     onDPS: function() {
         if (this.player.dps > 0) {
             if (this.currentMonster && this.currentMonster.alive) {
+                // this.canon = this.sound.add("canon");
+                // this.canon.play();
                 var dmg = this.player.dps / 10;
                 this.currentMonster.damage(dmg);
                 // update the health text
@@ -251,6 +252,8 @@ game.state.add('play', {
         }
         // give the player gold
         this.player.gold += coin.goldValue;
+        this.point = this.sound.add("point");
+        this.point.play();
         // update UI
         this.playerGoldText.text = 'Donuts: ' + this.player.gold;
         // remove the coin
@@ -289,6 +292,8 @@ game.state.add('play', {
         // update the text display
         this.monsterNameText.text = monster.details.name;
         this.monsterHealthText.text = monster.health + 'HP';
+        this.spawn = this.sound.add('spawn');
+        this.spawn.play();
     },
     onClickMonster: function(monster, pointer) {
         // apply click damage to monster
@@ -302,7 +307,8 @@ game.state.add('play', {
             dmgText.alpha = 1;
             dmgText.tween.start();
         }
-
+        this.hurt = this.sound.add("hurt");
+        this.hurt.play();
         // update the health text
         this.monsterHealthText.text = this.currentMonster.alive ? this.currentMonster.health + ' HP' : 'DEAD';
     }
