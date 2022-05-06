@@ -47,7 +47,7 @@ game.state.add('play', {
         // the main player
         this.player = {
             clickDmg: 2,
-            gold: 500,
+            gold: 50,
             dps: 0
         };
 
@@ -104,10 +104,10 @@ game.state.add('play', {
                 //stats enemies and agg with var path image
         var monsterData = [
             {name: 'Bart',        image: 'bart',        maxHealth: 60},
-            {name: 'Homer',        image: 'homer',        maxHealth: 100},
+            {name: 'Homer',        image: 'homer',        maxHealth: 120},
             {name: 'Lisa',        image: 'lisa',        maxHealth: 30},
-            {name: 'Marge',        image: 'marge',        maxHealth: 70},
-            {name: 'Maggie',        image: 'maggie',        maxHealth: 20},
+            {name: 'Marge',        image: 'marge',        maxHealth: 90},
+            {name: 'Maggie',        image: 'maggie',        maxHealth: 40},
           
         ];
         this.monsters = this.game.add.group();
@@ -179,7 +179,7 @@ game.state.add('play', {
         this.coins = this.add.group();
         this.coins.createMultiple(50, 'donut_pink', '', false);
         this.coins.setAll('inputEnabled', true);
-        this.coins.setAll('goldValue', 1);
+        this.coins.setAll('goldValue', 5);
         this.coins.callAll('events.onInputDown.add', 'events.onInputDown', this.onClickCoin, this);
 
         this.playerGoldText = this.add.text(550, 30, 'Donuts: ' + this.player.gold, {
@@ -217,7 +217,7 @@ game.state.add('play', {
             if (this.currentMonster && this.currentMonster.alive) {
                 // this.canon = this.sound.add("canon");
                 // this.canon.play();
-                var dmg = this.player.dps / 10;
+                var dmg = this.player.dps / 5;
                 this.currentMonster.damage(dmg);
                 // update the health text
                 this.monsterHealthText.text = this.currentMonster.alive ? Math.round(this.currentMonster.health) + ' HP' : 'DEAD';
@@ -260,7 +260,7 @@ game.state.add('play', {
         // spawn a coin on the ground
         coin = this.coins.getFirstExists(false);
         coin.reset(this.game.world.centerX + this.game.rnd.integerInRange(-100, 100), this.game.world.centerY);
-        coin.goldValue = Math.round(this.level * 1.13);
+        coin.goldValue = Math.round(this.level * 2.25);
         this.game.time.events.add(Phaser.Timer.SECOND * 3, this.onClickCoin, this, coin);
 
         this.levelKills++;
