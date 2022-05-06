@@ -45,17 +45,17 @@ game.state.add('play', {
 
         // build panel for upgrades
         var bmd = this.game.add.bitmapData(450, 500);
-        bmd.ctx.fillStyle = '#9a783d';
-        bmd.ctx.strokeStyle = '#35371c';
-        bmd.ctx.lineWidth = 12;
+        bmd.ctx.fillStyle = '#5262de';
+        bmd.ctx.strokeStyle = '#000000';
+        bmd.ctx.lineWidth = 6;
         bmd.ctx.fillRect(0, 0, 250, 500);
         bmd.ctx.strokeRect(0, 0, 250, 500);
         this.game.cache.addBitmapData('upgradePanel', bmd);
 
         var buttonImage = this.game.add.bitmapData(476, 48);
-        buttonImage.ctx.fillStyle = '#e6dec7';
-        buttonImage.ctx.strokeStyle = '#35371c';
-        buttonImage.ctx.lineWidth = 4;
+        buttonImage.ctx.fillStyle = '#dbd93d';
+        buttonImage.ctx.strokeStyle = '#000000';
+        buttonImage.ctx.lineWidth = 2;
         buttonImage.ctx.fillRect(0, 0, 225, 48);
         buttonImage.ctx.strokeRect(0, 0, 225, 48);
         this.game.cache.addBitmapData('button', buttonImage);
@@ -87,7 +87,7 @@ game.state.add('play', {
             });
 
             
-        this.upgradePanel = this.game.add.image(10, 70, this.game.cache.getBitmapData('upgradePanel'));
+        this.upgradePanel = this.game.add.image(550, 70, this.game.cache.getBitmapData('upgradePanel'));
         var upgradeButtons = this.upgradePanel.addChild(this.game.add.group());
         upgradeButtons.position.setTo(8, 8);
 
@@ -107,9 +107,9 @@ game.state.add('play', {
         upgradeButtonsData.forEach(function(buttonData, index) {
             button = state.game.add.button(0, (50 * index), state.game.cache.getBitmapData('button'));
             button.icon = button.addChild(state.game.add.image(6, 6, buttonData.icon));
-            button.text = button.addChild(state.game.add.text(42, 6, buttonData.name + ': ' + buttonData.level, {font: '16px Arial Black'}));
+            button.text = button.addChild(state.game.add.text(42, 6, buttonData.name + ': ' + buttonData.level, {font: '16px Helvetica Black'}));
             button.details = buttonData;
-            button.costText = button.addChild(state.game.add.text(42, 24, 'Cost: ' + buttonData.cost, {font: '16px Arial Black'}));
+            button.costText = button.addChild(state.game.add.text(42, 24, 'Cost: ' + buttonData.cost, {font: '16px Helvetica Black'}));
             button.events.onInputDown.add(state.onUpgradeButtonClick, state);
 
             upgradeButtons.addChild(button);
@@ -147,26 +147,27 @@ game.state.add('play', {
 
         // display the monster front and center
         this.currentMonster = this.monsters.getRandom();
-        this.currentMonster.position.set(this.game.world.centerX + 100, this.game.world.centerY + 50);
+        this.currentMonster.position.set(this.game.world.centerX, this.game.world.centerY + 100);
 
         this.monsterInfoUI = this.game.add.group();
-        this.monsterInfoUI.position.setTo(this.currentMonster.x - 220, this.currentMonster.y + 120);
-        this.monsterNameText = this.monsterInfoUI.addChild(this.game.add.text(0, 0, this.currentMonster.details.name, {
-            font: '48px Arial Black',
+        this.monsterInfoUI.position.setTo(this.currentMonster.x - 470, this.currentMonster.y - 120);
+        this.monsterNameText = this.monsterInfoUI.addChild(this.game.add.text(100, 0, this.currentMonster.details.name, {
+            font: '48px Helvetica Black',
             fill: '#fff',
             strokeThickness: 4
         }));
-        this.monsterHealthText = this.monsterInfoUI.addChild(this.game.add.text(0, 80, this.currentMonster.health + ' HP', {
-            font: '32px Arial Black',
+        this.monsterHealthText = this.monsterInfoUI.addChild(this.game.add.text(115, 80, this.currentMonster.health + ' HP', {
+            font: '32px Helvetica Black',
             fill: '#ff0000',
             strokeThickness: 4
         }));
+        
 
         this.dmgTextPool = this.add.group();
         var dmgText;
         for (var d=0; d<50; d++) {
             dmgText = this.add.text(0, 0, '1', {
-                font: '64px Arial Black',
+                font: '64px Helvetica Black',
                 fill: '#fff',
                 strokeThickness: 4
             });
@@ -193,7 +194,7 @@ game.state.add('play', {
         this.coins.callAll('events.onInputDown.add', 'events.onInputDown', this.onClickCoin, this);
 
         this.playerGoldText = this.add.text(30, 30, 'Donuts: ' + this.player.gold, {
-            font: '24px Arial Black',
+            font: '24px Helvetica Black',
             fill: '#fff',
             strokeThickness: 4
         });
@@ -204,19 +205,19 @@ game.state.add('play', {
         // setup the world progression display
         this.levelUI = this.game.add.group();
         this.levelUI.position.setTo(this.game.world.centerX, 30);
-        this.levelText = this.levelUI.addChild(this.game.add.text(0, 0, 'Level: ' + this.level, {
-            font: '24px Arial Black',
+        this.levelText = this.levelUI.addChild(this.game.add.text(-370, 500, 'Level: ' + this.level, {
+            font: '24px Helvetica Black',
             fill: '#fff',
             strokeThickness: 4
         }));
-        this.levelKillsText = this.levelUI.addChild(this.game.add.text(0, 30, 'Kills: ' + this.levelKills + '/' + this.levelKillsRequired, {
-            font: '24px Arial Black',
+        this.levelKillsText = this.levelUI.addChild(this.game.add.text(-370, 530, 'Kills: ' + this.levelKills + '/' + this.levelKillsRequired, {
+            font: '24px Helvetica Black',
             fill: '#fff',
             strokeThickness: 4
         }));
         this.theme = this.sound.add("theme");
         this.theme.play();
-        this.theme.setLoop(true);
+        this.theme.setLoop;
 
     },
     onDPS: function() {
@@ -288,7 +289,7 @@ game.state.add('play', {
         this.currentMonster.revive(this.currentMonster.maxHealth);
     },
     onRevivedMonster: function(monster) {
-        monster.position.set(this.game.world.centerX + 100, this.game.world.centerY + 50);
+        monster.position.set(this.game.world.centerX, this.game.world.centerY + 100);
         // update the text display
         this.monsterNameText.text = monster.details.name;
         this.monsterHealthText.text = monster.health + 'HP';
