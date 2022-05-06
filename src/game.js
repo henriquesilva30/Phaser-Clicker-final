@@ -31,8 +31,8 @@ game.state.add('play', {
         bmd.ctx.strokeStyle = '#000000';
         bmd.ctx.lineWidth = 6;
       // fill background panel
-      bmd.ctx.fillRect(0, 0, 250, 400);
-      bmd.ctx.strokeRect(0, 0, 250, 400);
+      bmd.ctx.fillRect(0, 0, 250, 375);
+      bmd.ctx.strokeRect(0, 0, 250, 375);
         this.game.cache.addBitmapData('upgradePanel', bmd);
 
     // container row skills
@@ -137,7 +137,7 @@ game.state.add('play', {
         this.currentMonster.position.set(this.game.world.centerX, this.game.world.centerY + 100);
         //position details monster
         this.monsterInfoUI = this.game.add.group();
-        this.monsterInfoUI.position.setTo(this.currentMonster.x - 270, this.currentMonster.y + 50);
+        this.monsterInfoUI.position.setTo(this.currentMonster.x - 100, this.currentMonster.y + 50);
         this.monsterNameText = this.monsterInfoUI.addChild(this.game.add.text(250, 0, this.currentMonster.details.name, {
             font: '48px Helvetica Black',
             fill: '#fff',
@@ -193,7 +193,7 @@ game.state.add('play', {
 
         // setup the world progression display
         this.levelUI = this.game.add.group();
-        this.levelUI.position.setTo(this.game.world.centerX, -450);
+        this.levelUI.position.setTo(this.game.world.centerX,-475);
         this.levelText = this.levelUI.addChild(this.game.add.text(-370, 500, 'Level: ' + this.level, {
             font: '24px Helvetica Black',
             fill: '#fff',
