@@ -37,9 +37,9 @@ game.state.add('play', {
 
     // container row skills
         var buttonImage = this.game.add.bitmapData(476, 48);
-        buttonImage.ctx.fillStyle = '#dbd93d';
-        buttonImage.ctx.strokeStyle = '#000000';
-        buttonImage.ctx.lineWidth = 4;
+        buttonImage.ctx.fillStyle = '#ffa';
+        buttonImage.ctx.strokeStyle = '#000';
+        buttonImage.ctx.lineWidth = 5;
         buttonImage.ctx.fillRect(0, 0, 225, 48);
         buttonImage.ctx.strokeRect(0, 0, 225, 48);
         this.game.cache.addBitmapData('button', buttonImage);
@@ -93,9 +93,9 @@ game.state.add('play', {
         upgradeButtonsData.forEach(function(buttonData, index) {
             button = state.game.add.button(0, (55 * index), state.game.cache.getBitmapData('button'));
             button.icon = button.addChild(state.game.add.image(6, 6, buttonData.icon));
-            button.text = button.addChild(state.game.add.text(42, 6, buttonData.name + ': ' + buttonData.level, {font: '16px Helvetica Black'}));
+            button.text = button.addChild(state.game.add.text(50, 6, buttonData.name + ': ' + buttonData.level, {font: '16px Helvetica Black'}));
             button.details = buttonData;
-            button.costText = button.addChild(state.game.add.text(42, 24, 'Cost: ' + buttonData.cost, {font: '16px Helvetica Black'}));
+            button.costText = button.addChild(state.game.add.text(50, 24, 'Cost: ' + buttonData.cost, {font: '16px Helvetica Black'}));
             button.events.onInputDown.add(state.onUpgradeButtonClick, state);
 
             upgradeButtons.addChild(button);
@@ -157,7 +157,7 @@ game.state.add('play', {
         for (var d=0; d<50; d++) {
             dmgText = this.add.text(0, 0, '1', {
                 font: '64px Helvetica Black',
-                fill: '#fff',
+                fill: '#ff0',
                 strokeThickness: 4
             });
             // start out not existing, so we don't draw it yet
