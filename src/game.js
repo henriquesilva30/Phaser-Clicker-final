@@ -1,5 +1,11 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '');
 
+var Skills = [
+    {icon: 'fist', name: 'Punch', level: 0, cost: 5, purchaseHandler: function(button, player) {
+        player.clickDmg += 1;
+    }}
+];
+
 game.state.add('play', {
     preload: function() {
         this.game.load.image('background1', 'assets/parallax_forest_pack/layers/background.png');
@@ -74,34 +80,16 @@ game.state.add('play', {
         // how many monsters are required to advance a level
         this.levelKillsRequired = 10;
     },
-    create: function() {
+    loadUpgrades: function(Skills){
         var state = this;
 
         this.background = this.game.add.group();
-        // setup each of our background layers to take the full screen
-        ['background1','background2']
-            .forEach(function(image) {
-                var bg = state.game.add.tileSprite(0, 0, state.game.world.width,
-                    state.game.world.height, image, '', state.background);
-                bg.tileScale.setTo(4,4);
-            });
 
+        let upgradeButtonsData = Skills;
             
         this.upgradePanel = this.game.add.image(550, 70, this.game.cache.getBitmapData('upgradePanel'));
         var upgradeButtons = this.upgradePanel.addChild(this.game.add.group());
         upgradeButtons.position.setTo(8, 8);
-
-        var upgradeButtonsData = [
-            {icon: 'fist', name: 'Punch', level: 0, cost: 5, purchaseHandler: function(button, player) {
-                player.clickDmg += 1;
-            }},
-            {icon: 'firePunch', name: 'Multi-Punch', level: 0, cost: 15, purchaseHandler: function(button, player) {
-                player.dps += 5;
-            }},
-            {icon: 'nest', name: 'Nest', level: 0, cost: 35, purchaseHandler: function(button, player) {
-                player.clickDmg += 15;
-            }}
-        ];
 
         var button;
         upgradeButtonsData.forEach(function(buttonData, index) {
@@ -114,6 +102,23 @@ game.state.add('play', {
 
             upgradeButtons.addChild(button);
         });
+
+        return upgradeButtonsData;
+    },
+    create: function() {
+        var state = this;
+
+        // setup each of our background layers to take the full screen
+        ['background1','background2']
+            .forEach(function(image) {
+                var bg = state.game.add.tileSprite(0, 0, state.game.world.width,
+                    state.game.world.height, image, '', state.background);
+                bg.tileScale.setTo(4,4);
+            });
+
+        
+
+        this.loadUpgrades(Skills);
 
         var monsterData = [
             {name: 'Bart',        image: 'bart',        maxHealth: 60},
@@ -295,6 +300,29 @@ game.state.add('play', {
         this.monsterHealthText.text = monster.health + 'HP';
         this.spawn = this.sound.add('spawn');
         this.spawn.play();
+
+        if(this.level === 2 && this.levelKills === 0){
+
+            let input = {icon: 'firePunch', name: 'Multi-Punch', level: 0, cost: 15, purchaseHandler: function(button, player) {
+                player.dps += 5;
+            }};
+
+            let array = this.loadUpgrades(Skills);
+
+            array.push(input);
+            this.loadUpgrades(array);
+        }
+        if(this.level === 3 && this.levelKills === 0){
+
+            let input = {icon: 'nest', name: 'Nest', level: 0, cost: 35, purchaseHandler: function(button, player) {
+                player.dps += 15;
+            }};
+
+            let array = this.loadUpgrades(Skills);
+
+            array.push(input);  
+            this.loadUpgrades(array);
+        }
     },
     onClickMonster: function(monster, pointer) {
         // apply click damage to monster
