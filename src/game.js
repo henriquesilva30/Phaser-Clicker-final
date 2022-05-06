@@ -100,19 +100,14 @@ game.state.add('play', {
         var state = this;
 
      
-        // setup each of our background layers to take the full screen
-        ['background1','background2']
-            .forEach(function(image) {
-                var bg = state.game.add.tileSprite(0, 0, state.game.world.width,
-                    state.game.world.height, image, '', state.background);
-                bg.tileScale.setTo(4,4);
-            });
+        // setup background    
+        var bg = state.game.add.tileSprite(0, 0, state.game.world.width,
+            state.game.world.height, "background2", '', state.background);
+        bg.tileScale.setTo(4,4);
 
+        this.loadUpgrades(Skills);
 
-            this.loadUpgrades(Skills);
-
-
-                //stats enemies and agg with var path image
+        //stats enemies and agg with var path image
         var monsterData = [
             {name: 'Bart',        image: 'bart',        maxHealth: 60},
             {name: 'Homer',        image: 'homer',        maxHealth: 120},
@@ -300,6 +295,12 @@ game.state.add('play', {
         this.spawn.play();
 
         if(this.level === 2 && this.levelKills === 0){
+            const state = this;
+
+            var bg = state.game.add.tileSprite(0, 0, state.game.world.width,
+                state.game.world.height, 'background1', '', state.background);
+            bg.tileScale.setTo(4,4);
+
 
             let input = {icon: 'firePunch', name: 'Multi-Punch', level: 0, cost: 15, purchaseHandler: function(button, player) {
                 player.dps += 5;
@@ -311,6 +312,11 @@ game.state.add('play', {
             this.loadUpgrades(array);
         }
         if(this.level === 3 && this.levelKills === 0){
+            // const state = this;
+
+            // var bg = state.game.add.tileSprite(0, 0, state.game.world.width,
+            //     state.game.world.height, 'background2', '', state.background);
+            // bg.tileScale.setTo(4,4);
 
             let input = {icon: 'nest', name: 'Nest', level: 0, cost: 35, purchaseHandler: function(button, player) {
                 player.dps += 15;
