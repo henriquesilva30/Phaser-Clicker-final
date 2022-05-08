@@ -1,48 +1,53 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '');
 
+var Skills = [
+    {icon: 'fist', name: 'Punch', level: 0, cost: 5, purchaseHandler: function(button, player) {
+        player.clickDmg += 1;
+    }}
+];
+
+
 game.state.add('play', {
     preload: function() {
+        //aggregate img path to var background
         this.game.load.image('background1', 'assets/parallax_forest_pack/layers/background.png');
         this.game.load.image('background2', 'assets/parallax_forest_pack/layers/background2.png');
-        this.game.load.image('forest-middle', 'assets/parallax_forest_pack/layers/parallax-forest-middle-trees.png');
-        this.game.load.image('forest-front', 'assets/parallax_forest_pack/layers/parallax-forest-front-trees.png');
-
+        //aggregate img path to var enemies
         this.game.load.image('bart', 'assets/allacrost_enemy_sprites/bart.png');
         this.game.load.image('homer', 'assets/allacrost_enemy_sprites/homer.png');
-        this.game.load.image('aurum-drakueli', 'assets/allacrost_enemy_sprites/aurum-drakueli.png');
-        this.game.load.image('bat', 'assets/allacrost_enemy_sprites/bat.png');
-        this.game.load.image('daemarbora', 'assets/allacrost_enemy_sprites/daemarbora.png');
-        this.game.load.image('deceleon', 'assets/allacrost_enemy_sprites/deceleon.png');
-        this.game.load.image('demonic_essence', 'assets/allacrost_enemy_sprites/demonic_essence.png');
-        this.game.load.image('dune_crawler', 'assets/allacrost_enemy_sprites/dune_crawler.png');
-        this.game.load.image('green_slime', 'assets/allacrost_enemy_sprites/green_slime.png');
-        this.game.load.image('nagaruda', 'assets/allacrost_enemy_sprites/nagaruda.png');
-        this.game.load.image('rat', 'assets/allacrost_enemy_sprites/rat.png');
-        this.game.load.image('scorpion', 'assets/allacrost_enemy_sprites/scorpion.png');
-        this.game.load.image('skeleton', 'assets/allacrost_enemy_sprites/skeleton.png');
-        this.game.load.image('snake', 'assets/allacrost_enemy_sprites/snake.png');
-        this.game.load.image('spider', 'assets/allacrost_enemy_sprites/spider.png');
-        this.game.load.image('stygian_lizard', 'assets/allacrost_enemy_sprites/stygian_lizard.png');
-
+        this.game.load.image('lisa', 'assets/allacrost_enemy_sprites/lisa2.png');
+        this.game.load.image('marge', 'assets/allacrost_enemy_sprites/marge.png');
+        this.game.load.image('maggie', 'assets/allacrost_enemy_sprites/maggie2.png');
+        //aggregate img path to var reward
         this.game.load.image('donut_pink', 'assets/496_RPG_icons/donut_pink.png');
-
+        //aggregate img path to var attacks
         this.game.load.image('fist', 'assets/496_RPG_icons/fist.png');
         this.game.load.image('nest', 'assets/496_RPG_icons/nest.png');
         this.game.load.image('firePunch', 'assets/496_RPG_icons/firepunch_alpha.gif');
+        //aggregate audio path to var background
+        this.game.load.audio('theme','assets/audio/theme.mp3');
+        this.game.load.audio('canon','assets/audio/canon.mp3');
+        this.game.load.audio('hurt','assets/audio/hurt.wav');
+        this.game.load.audio('point','assets/audio/points.mp3');
+        this.game.load.audio('spawn','assets/audio/bossspawn.mp3');
+
 
         // build panel for upgrades
+        //width and height
         var bmd = this.game.add.bitmapData(450, 500);
-        bmd.ctx.fillStyle = '#9a783d';
-        bmd.ctx.strokeStyle = '#35371c';
-        bmd.ctx.lineWidth = 12;
-        bmd.ctx.fillRect(0, 0, 250, 500);
-        bmd.ctx.strokeRect(0, 0, 250, 500);
+        bmd.ctx.fillStyle = '#5262de';
+        bmd.ctx.strokeStyle = '#000000';
+        bmd.ctx.lineWidth = 6;
+      // fill background panel
+      bmd.ctx.fillRect(0, 0, 250, 375);
+      bmd.ctx.strokeRect(0, 0, 250, 375);
         this.game.cache.addBitmapData('upgradePanel', bmd);
 
+    // container row skills
         var buttonImage = this.game.add.bitmapData(476, 48);
-        buttonImage.ctx.fillStyle = '#e6dec7';
-        buttonImage.ctx.strokeStyle = '#35371c';
-        buttonImage.ctx.lineWidth = 4;
+        buttonImage.ctx.fillStyle = '#ffa';
+        buttonImage.ctx.strokeStyle = '#000';
+        buttonImage.ctx.lineWidth = 5;
         buttonImage.ctx.fillRect(0, 0, 225, 48);
         buttonImage.ctx.strokeRect(0, 0, 225, 48);
         this.game.cache.addBitmapData('button', buttonImage);
@@ -50,7 +55,7 @@ game.state.add('play', {
         // the main player
         this.player = {
             clickDmg: 2,
-            gold: 500,
+            gold: 50,
             dps: 0
         };
 
@@ -61,49 +66,54 @@ game.state.add('play', {
         // how many monsters are required to advance a level
         this.levelKillsRequired = 10;
     },
-    create: function() {
+    
+    loadUpgrades: function(Skills){
         var state = this;
 
         this.background = this.game.add.group();
-        // setup each of our background layers to take the full screen
-        ['background1','background2']
-            .forEach(function(image) {
-                var bg = state.game.add.tileSprite(0, 0, state.game.world.width,
-                    state.game.world.height, image, '', state.background);
-                bg.tileScale.setTo(4,4);
-            });
 
+        let upgradeButtonsData = Skills;
             
-        this.upgradePanel = this.game.add.image(10, 70, this.game.cache.getBitmapData('upgradePanel'));
+        //position panel upgrade
+        this.upgradePanel = this.game.add.image(540, 70, this.game.cache.getBitmapData('upgradePanel'));
         var upgradeButtons = this.upgradePanel.addChild(this.game.add.group());
-        upgradeButtons.position.setTo(8, 8);
-
-        var upgradeButtonsData = [
-            {icon: 'fist', name: 'Punch', level: 0, cost: 5, purchaseHandler: function(button, player) {
-                player.clickDmg += 1;
-            }},
-            {icon: 'firePunch', name: 'Multi-Punch', level: 0, cost: 15, purchaseHandler: function(button, player) {
-                player.dps += 5;
-            }},
-            {icon: 'nest', name: 'Nest', level: 0, cost: 35, purchaseHandler: function(button, player) {
-                player.dps += 15;
-            }}
-        ];
+        upgradeButtons.position.setTo(11, 11);
 
         var button;
+        //iteration of our upgradeButton, position content icon, text..  
+
         upgradeButtonsData.forEach(function(buttonData, index) {
-            button = state.game.add.button(0, (50 * index), state.game.cache.getBitmapData('button'));
+            button = state.game.add.button(0, (55 * index), state.game.cache.getBitmapData('button'));
             button.icon = button.addChild(state.game.add.image(6, 6, buttonData.icon));
-            button.text = button.addChild(state.game.add.text(42, 6, buttonData.name + ': ' + buttonData.level, {font: '16px Arial Black'}));
+            button.text = button.addChild(state.game.add.text(50, 6, buttonData.name + ': ' + buttonData.level, {font: '16px Helvetica Black'}));
             button.details = buttonData;
-            button.costText = button.addChild(state.game.add.text(42, 24, 'Cost: ' + buttonData.cost, {font: '16px Arial Black'}));
+            button.costText = button.addChild(state.game.add.text(50, 24, 'Cost: ' + buttonData.cost, {font: '16px Helvetica Black'}));
             button.events.onInputDown.add(state.onUpgradeButtonClick, state);
 
+       
             upgradeButtons.addChild(button);
         });
 
+        return upgradeButtonsData;
+    },
+    create: function() {
+        var state = this;
+
+     
+        // setup background    
+        var bg = state.game.add.tileSprite(0, 0, state.game.world.width,
+            state.game.world.height, "background2", '', state.background);
+        bg.tileScale.setTo(4,4);
+
+        this.loadUpgrades(Skills);
+
+        //stats enemies and agg with var path image
         var monsterData = [
-            {name: 'Homer',        image: 'homer',        maxHealth: 100},
+            {name: 'Bart',        image: 'bart',        maxHealth: 60},
+            {name: 'Homer',        image: 'homer',        maxHealth: 120},
+            {name: 'Lisa',        image: 'lisa',        maxHealth: 30},
+            {name: 'Marge',        image: 'marge',        maxHealth: 90},
+            {name: 'Maggie',        image: 'maggie',        maxHealth: 40},
           
         ];
         this.monsters = this.game.add.group();
@@ -130,27 +140,30 @@ game.state.add('play', {
 
         // display the monster front and center
         this.currentMonster = this.monsters.getRandom();
-        this.currentMonster.position.set(this.game.world.centerX + 100, this.game.world.centerY + 50);
-
+        this.currentMonster.position.set(this.game.world.centerX, this.game.world.centerY + 100);
+        //position details monster
         this.monsterInfoUI = this.game.add.group();
-        this.monsterInfoUI.position.setTo(this.currentMonster.x - 220, this.currentMonster.y + 120);
-        this.monsterNameText = this.monsterInfoUI.addChild(this.game.add.text(0, 0, this.currentMonster.details.name, {
-            font: '48px Arial Black',
+        this.monsterInfoUI.position.setTo(this.currentMonster.x - 100, this.currentMonster.y + 50);
+        this.monsterNameText = this.monsterInfoUI.addChild(this.game.add.text(250, 0, this.currentMonster.details.name, {
+            font: '48px Helvetica Black',
             fill: '#fff',
             strokeThickness: 4
         }));
-        this.monsterHealthText = this.monsterInfoUI.addChild(this.game.add.text(0, 80, this.currentMonster.health + ' HP', {
-            font: '32px Arial Black',
+                // update monster health
+
+        this.monsterHealthText = this.monsterInfoUI.addChild(this.game.add.text(250, 80, this.currentMonster.health + ' HP', {
+            font: '32px Helvetica Black',
             fill: '#ff0000',
             strokeThickness: 4
         }));
-
+        
+        // hit click
         this.dmgTextPool = this.add.group();
         var dmgText;
         for (var d=0; d<50; d++) {
             dmgText = this.add.text(0, 0, '1', {
-                font: '64px Arial Black',
-                fill: '#fff',
+                font: '64px Helvetica Black',
+                fill: '#ff0',
                 strokeThickness: 4
             });
             // start out not existing, so we don't draw it yet
@@ -172,36 +185,45 @@ game.state.add('play', {
         this.coins = this.add.group();
         this.coins.createMultiple(50, 'donut_pink', '', false);
         this.coins.setAll('inputEnabled', true);
-        this.coins.setAll('goldValue', 1);
+        this.coins.setAll('goldValue', 5);
         this.coins.callAll('events.onInputDown.add', 'events.onInputDown', this.onClickCoin, this);
 
-        this.playerGoldText = this.add.text(30, 30, 'Donuts: ' + this.player.gold, {
-            font: '24px Arial Black',
+        this.playerGoldText = this.add.text(550, 30, 'Donuts: ' + this.player.gold, {
+            font: '24px Helvetica Black',
             fill: '#fff',
             strokeThickness: 4
         });
 
-        // 100ms 10x a second
-        this.dpsTimer = this.game.time.events.loop(100, this.onDPS, this);
+        // 1000ms 1x a second
+        this.dpsTimer = this.game.time.events.loop(500, this.onDPS, this);
 
         // setup the world progression display
         this.levelUI = this.game.add.group();
-        this.levelUI.position.setTo(this.game.world.centerX, 30);
-        this.levelText = this.levelUI.addChild(this.game.add.text(0, 0, 'Level: ' + this.level, {
-            font: '24px Arial Black',
+        this.levelUI.position.setTo(this.game.world.centerX,-475);
+        this.levelText = this.levelUI.addChild(this.game.add.text(-370, 500, 'Level: ' + this.level, {
+            font: '24px Helvetica Black',
             fill: '#fff',
             strokeThickness: 4
         }));
-        this.levelKillsText = this.levelUI.addChild(this.game.add.text(0, 30, 'Kills: ' + this.levelKills + '/' + this.levelKillsRequired, {
-            font: '24px Arial Black',
+        this.levelKillsText = this.levelUI.addChild(this.game.add.text(-370, 530, 'Kills: ' + this.levelKills + '/' + this.levelKillsRequired, {
+            font: '24px Helvetica Black',
             fill: '#fff',
             strokeThickness: 4
         }));
+            //damage per second auto attack
+
+        this.theme = this.sound.add("theme");
+        this.theme.play();
+        this.theme.setLoop;
+
     },
+    // damage per second
     onDPS: function() {
         if (this.player.dps > 0) {
             if (this.currentMonster && this.currentMonster.alive) {
-                var dmg = this.player.dps / 10;
+                // this.canon = this.sound.add("canon");
+                // this.canon.play();
+                var dmg = this.player.dps / 5;
                 this.currentMonster.damage(dmg);
                 // update the health text
                 this.monsterHealthText.text = this.currentMonster.alive ? Math.round(this.currentMonster.health) + ' HP' : 'DEAD';
@@ -229,6 +251,8 @@ game.state.add('play', {
         }
         // give the player gold
         this.player.gold += coin.goldValue;
+        this.point = this.sound.add("point");
+        this.point.play();
         // update UI
         this.playerGoldText.text = 'Donuts: ' + this.player.gold;
         // remove the coin
@@ -242,7 +266,7 @@ game.state.add('play', {
         // spawn a coin on the ground
         coin = this.coins.getFirstExists(false);
         coin.reset(this.game.world.centerX + this.game.rnd.integerInRange(-100, 100), this.game.world.centerY);
-        coin.goldValue = Math.round(this.level * 1.13);
+        coin.goldValue = Math.round(this.level * 2.25);
         this.game.time.events.add(Phaser.Timer.SECOND * 3, this.onClickCoin, this, coin);
 
         this.levelKills++;
@@ -263,10 +287,46 @@ game.state.add('play', {
         this.currentMonster.revive(this.currentMonster.maxHealth);
     },
     onRevivedMonster: function(monster) {
-        monster.position.set(this.game.world.centerX + 100, this.game.world.centerY + 50);
+        monster.position.set(this.game.world.centerX, this.game.world.centerY + 100);
         // update the text display
         this.monsterNameText.text = monster.details.name;
         this.monsterHealthText.text = monster.health + 'HP';
+        this.spawn = this.sound.add('spawn');
+        this.spawn.play();
+
+        if(this.level === 2 && this.levelKills === 0){
+            const state = this;
+
+            var bg = state.game.add.tileSprite(0, 0, state.game.world.width,
+                state.game.world.height, 'background1', '', state.background);
+            bg.tileScale.setTo(4,4);
+
+
+            let input = {icon: 'firePunch', name: 'Multi-Punch', level: 0, cost: 15, purchaseHandler: function(button, player) {
+                player.dps += 5;
+            }};
+
+            let array = this.loadUpgrades(Skills);
+
+            array.push(input);
+            this.loadUpgrades(array);
+        }
+        if(this.level === 3 && this.levelKills === 0){
+            // const state = this;
+
+            // var bg = state.game.add.tileSprite(0, 0, state.game.world.width,
+            //     state.game.world.height, 'background2', '', state.background);
+            // bg.tileScale.setTo(4,4);
+
+            let input = {icon: 'nest', name: 'Nest', level: 0, cost: 35, purchaseHandler: function(button, player) {
+                player.dps += 15;
+            }};
+
+            let array = this.loadUpgrades(Skills);
+
+            array.push(input);  
+            this.loadUpgrades(array);
+        }
     },
     onClickMonster: function(monster, pointer) {
         // apply click damage to monster
@@ -280,7 +340,8 @@ game.state.add('play', {
             dmgText.alpha = 1;
             dmgText.tween.start();
         }
-
+        this.hurt = this.sound.add("hurt");
+        this.hurt.play();
         // update the health text
         this.monsterHealthText.text = this.currentMonster.alive ? this.currentMonster.health + ' HP' : 'DEAD';
     }
