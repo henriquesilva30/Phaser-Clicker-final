@@ -2,7 +2,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '');
 
 var Skills = [
     {icon: 'fist', name: 'Punch', level: 0, cost: 5, purchaseHandler: function(button, player) {
-        player.clickDmg += 1;
+        player.clickDmg += 2;
     }}
 ];
 
@@ -221,6 +221,7 @@ game.state.add('play', {
     onDPS: function() {
         if (this.player.dps > 0) {
             if (this.currentMonster && this.currentMonster.alive) {
+                
                 // this.canon = this.sound.add("canon");
                 // this.canon.play();
                 var dmg = this.player.dps / 5;
@@ -319,7 +320,7 @@ game.state.add('play', {
             // bg.tileScale.setTo(4,4);
 
             let input = {icon: 'nest', name: 'Nest', level: 0, cost: 35, purchaseHandler: function(button, player) {
-                player.dps += 15;
+                player.clickDmg += 15;
             }};
 
             let array = this.loadUpgrades(Skills);
